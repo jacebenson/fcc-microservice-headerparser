@@ -1,22 +1,12 @@
 var http = require('http');
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 function handleRequest(request, response) {
   var returnObj = {
-    unixTimeStamp: null,
-    naturalLanguageDate: null
+    //headers: JSON.stringify(request.headers,'','  '),
+    language: request.headers['accept-language'].split(',')[0],
+    os: request.headers['user-agent'].split('(')[1].split(')')[0],
+    ip: request.headers['x-forwarded-for']
   };
-  var input = request.url.toString().split('/')[1];
-    if (input.length > 0) {
-    if (isNaN(input)) {//not a number
-      var d = new Date(decodeURIComponent(input));
-      returnObj.unixTimeStamp = d.valueOf();
-      returnObj.naturalLanguageDate = d.toDateString();
-    } else {
-      var d = new Date(parseInt(input, 10));
-      returnObj.unixTimeStamp = d.valueOf();
-      returnObj.naturalLanguageDate = d.toDateString();
-    }
-  }
   response.setHeader('Content-Type', 'application/json');
   response.end(JSON.stringify(returnObj, '', '  '));
 }
